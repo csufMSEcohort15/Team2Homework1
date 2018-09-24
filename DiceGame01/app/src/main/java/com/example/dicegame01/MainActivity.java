@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
     int playerScore;
     DiceNumberSelectorDialog diceValueSelector;
     StatsDialog statisticsViewer;
+    ContinueGameDialog continueGameQuery;
 
 
     //ArrayList to hold all dice values
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
 
         diceValueSelector = new DiceNumberSelectorDialog();
         statisticsViewer = new StatsDialog();
+        continueGameQuery = new ContinueGameDialog();
 
         // image array
         ImageView die1Image = (ImageView) findViewById(R.id.die1Image);
@@ -133,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
             Toast.makeText(this, "Computer Score: " + computerScore + " Player Score: " + playerScore + " Game Tie.", Toast.LENGTH_SHORT).show();
         }
         statsList.add(temp);
+        continueGameQuery.setContinueGameDialogResult(temp);
+        continueGameQuery.show(getSupportFragmentManager(), "Continue Game?");
     }
 
     public void getStats(View v)
