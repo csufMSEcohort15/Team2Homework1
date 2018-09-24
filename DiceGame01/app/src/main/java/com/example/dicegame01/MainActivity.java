@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
 
     // btn of the game
     Button rollButton;
-
+    Button statsButton;
 
     // random number generator
     Random rand;
@@ -48,10 +48,13 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
 
     int playerScore;
     DiceNumberSelectorDialog diceValueSelector;
+    StatsDialog statisticsViewer;
 
 
     //ArrayList to hold all dice values
     ArrayList<Integer> dice;
+
+    ArrayList<Stats> statsList;
 
     //ArrayList to hold all the dice images
     ArrayList<ImageView> diceImageViews;
@@ -70,44 +73,72 @@ public class MainActivity extends AppCompatActivity implements NumberPicker.OnVa
 
         // play button
         rollButton = (Button) findViewById(R.id.rollButton);
-
+        statsButton = (Button) findViewById(R.id.statsButton);
 
         // Init the random number
         rand = new Random();
 
         // dice array
         dice = new ArrayList<Integer>();
+        statsList = new ArrayList<Stats>();
 
         diceValueSelector = new DiceNumberSelectorDialog();
+        statisticsViewer = new StatsDialog();
 
         // image array
         ImageView die1Image = (ImageView) findViewById(R.id.die1Image);
         ImageView die2Image = (ImageView) findViewById(R.id.die2Image);
         ImageView die3Image = (ImageView) findViewById(R.id.die3Image);
+        ImageView die4Image = (ImageView) findViewById(R.id.die4Image);
 
         diceImageViews = new ArrayList<ImageView>();
         diceImageViews.add(die1Image);
         diceImageViews.add(die2Image);
         diceImageViews.add(die3Image);
-
+        diceImageViews.add(die4Image);
     }
 
     @Override
     public void onValueChange(NumberPicker picker, int val1, int val2) {
         die4 = picker.getValue();
+        dice.add(die4);
+        try
+        {
+            String imageName = "die_" + dice.get(3) + ".jpg";
+            InputStream stream = getAssets().open(imageName);
+            Drawable d = Drawable.createFromStream(stream,null);
+            diceImageViews.get(3).setImageDrawable(d);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         String msg3 = "The player dice is " + die3 + "." + " Player dice 2 is " + die4;
         rollResult2.setText(msg3);
         computerScore = CalcModSum(die1, die2);
         playerScore = CalcModSum(die3, die4);
+        Stats temp = new Stats();
+        temp.setComputerScore(computerScore);
+        temp.setPlayerScore(playerScore);
         if(computerScore > playerScore) {
+            temp.setRoundWinner("Computer");
             Toast.makeText(this, "Computer Score: " + computerScore + " Player Score: " + playerScore + " Computer Wins.", Toast.LENGTH_SHORT).show();
         }
         else if(playerScore > computerScore) {
+            temp.setRoundWinner("Player");
             Toast.makeText(this, "Computer Score: " + computerScore + " Player Score: " + playerScore + " Player Wins.", Toast.LENGTH_SHORT).show();
         }
         else {
+            temp.setRoundWinner("Tie");
             Toast.makeText(this, "Computer Score: " + computerScore + " Player Score: " + playerScore + " Game Tie.", Toast.LENGTH_SHORT).show();
         }
+        statsList.add(temp);
+    }
+
+    public void getStats(View v)
+    {
+        statisticsViewer.setRoundResults(statsList);
+        statisticsViewer.show(getSupportFragmentManager(), "Stats Viewer");
     }
 
 
